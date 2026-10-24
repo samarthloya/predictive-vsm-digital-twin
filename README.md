@@ -61,7 +61,7 @@ python vsm_ml_engine.py
 
 ```
 
-*(Note: Ensure your `vsm_ml_engine.py` is configured for the AI4I dataset, or create a separate `ai4i_ml_ai4i2020.py` script).*
+*(Note: Ensure your `vsm_ml_engine.py` is configured for the AI4I dataset, or create a separate `vsm_ml_ai4i2020.py` script).*
 5. Launch the continuous health monitoring dashboard:
 
 ```bash
