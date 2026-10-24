@@ -1,28 +1,22 @@
-# Predictive Value Stream Mapping (VSM) & Condition Monitoring using Machine Learning
+# Predictive Value Stream Mapping (VSM) & Condition Monitoring
 
 ## Project Overview
 
-This project bridges traditional Lean Manufacturing with Industrie 4.0 principles by upgrading the static Value Stream Mapping (VSM) methodology into a dynamic, predictive algorithm. The project is built in two phases to demonstrate both physical process modeling and real-world data handling:
+This project bridges traditional Lean Manufacturing with Industrie 4.0 principles by upgrading the static Value Stream Mapping (VSM) methodology into a dynamic, predictive algorithm. The project is split into two operational models:
 
-1. **Phase 1 (Simulation):** A digital twin for a continuous flow surface treatment and powder coating line, modeling physical constraints like batch-loading pretreatment and geometric hanger capacities.
-2. **Phase 2 (Real-World Data):** An integration of the open-source AI4I 2020 Predictive Maintenance dataset to monitor real-time CNC sensor telemetry and forecast machine breakdowns before they become bottlenecks.
+1. **Synthetic Digital Twin:** Simulates a continuous flow surface treatment and powder coating line to predict total manufacturing lead times and dynamically identify shifting bottlenecks based on physical daily production variables.
+2. **Real-World Condition Monitoring:** Utilizes the publicly available AI4I 2020 Predictive Maintenance dataset to forecast machine breakdowns. It translates binary failure predictions into a continuous probabilistic "Machine Health Score" to prevent unplanned downtime.
 
 ## Technical Architecture
 
-* **Data Engineering:**
-* *Synthetic Generator:* Python (NumPy, Pandas) script simulating realistic powder coating shift data (batch vs. continuous flow constraints).
-* *Real-World Dataset:* Implementation of the AI4I 2020 Predictive Maintenance dataset to handle actual industrial sensor data (temperature, torque, RPM, tool wear).
-
-
-* **Predictive ML Engine:** Scikit-Learn dual-model architecture. Utilizes a Random Forest Regressor to forecast lead times, and a Random Forest Classifier leveraging `predict_proba` to generate a continuous "Machine Health Score" (Predicted Uptime) rather than a simple binary fail state.
-* **Digital Twin Dashboards:** Local Streamlit web applications providing interactive UIs for production planners to visualize the predicted Value Stream flow and monitor real-time sensor anomalies.
+* **Data Pipelines:** Python (NumPy, Pandas) for both simulating physical constraint data (batch-loading pretreatment, overhead conveyor hanger capacities) and preprocessing real-world multivariate CNC sensor data.
+* **Predictive ML Engine:** Scikit-Learn utilizing Random Forest Regressors for lead time forecasting, and Random Forest Classifiers for both bottleneck identification and predictive maintenance (PdM).
+* **Digital Twin Dashboards:** Interactive Streamlit web applications providing UIs for production planners to visualize predicted Value Stream flow and monitor real-time machine health degradation.
 
 ## Key Lean Manufacturing Insights
 
-Through Random Forest feature importance extraction, the models mathematically validated two critical shop-floor realities:
-
-1. **Physical Flow:** In the surface coating model, **geometric hanger capacity** and **total volume** were the highest drivers of lead time variance, superseding micro-stoppages or color-change setups.
-2. **Condition Monitoring:** In the real-world CNC model, **torque** and **rotational speed variance** were the leading indicators of impending machine failure, allowing planners to reroute the VSM before the station's uptime drops to 0%.
+* **Physical Constraints (Synthetic Model):** Feature importance extraction validated that geometric hanger capacity and total batch volume are the highest drivers of lead time variance. Optimizing physical part-loading configurations significantly supersedes efforts to reduce color-change setup delays.
+* **Predictive Maintenance (AI4I Model):** Machine learning analysis proved that torque and rotational speed variance are the heaviest predictors of impending machine failure, allowing planners to schedule proactive maintenance before a station reaches 0% uptime and becomes a bottleneck.
 
 ## Local Installation & Execution
 
@@ -30,23 +24,45 @@ Through Random Forest feature importance extraction, the models mathematically v
 2. Install dependencies:
 
 ```bash
-pip install pandas numpy scikit-learn streamlit
+pip install pandas numpy scikit-learn streamlit joblib
 
 ```
 
-**To run the Synthetic Powder Coating Model:**
+### Option A: Run the Synthetic Powder Coating Simulation
+
+3. Generate the physical constraint dataset:
 
 ```bash
 python vsm_data_gen.py
+
+```
+
+4. Train the predictive models:
+
+```bash
 python vsm_ml_engine.py
+
+```
+
+5. Launch the interactive dashboard:
+
+```bash
 python -m streamlit run app.py
 
 ```
 
-**To run the Real-World Predictive Maintenance Monitor:**
+### Option B: Run the Real-World AI4I PdM Model
 
-1. Ensure `ai4i2020.csv` is in the root directory.
-2. Train the real-data model and launch the dashboard:
+3. Ensure the downloaded `ai4i2020.csv` file is in your project directory.
+4. Train the predictive maintenance model:
+
+```bash
+python vsm_ml_engine.py
+
+```
+
+*(Note: Ensure your `vsm_ml_engine.py` is configured for the AI4I dataset, or create a separate `ai4i_ml_ai4i2020.py` script).*
+5. Launch the continuous health monitoring dashboard:
 
 ```bash
 python -m streamlit run app_ai4i2020.py
